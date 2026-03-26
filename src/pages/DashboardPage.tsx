@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Loader2, RefreshCw, LayoutDashboard, Sparkles, Target, Zap, CheckCircle2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProgressChart } from "@/components/dashboard/ProgressChart";
 import { useGenPath } from "@/context/GenPathContext";
 import { cn } from "@/lib/utils";
 
@@ -137,32 +138,8 @@ export function DashboardPage() {
               )}
             </div>
           </div>
-          
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-amber-500" />
-                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-widest">Weekly Progress</h2>
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-end h-24 pt-4">
-              {/* Mock Bar Chart matching layout spec requirements */}
-              {[40, 65, 30, 85].map((val, i) => (
-                <div key={i} className="flex flex-col items-center gap-2">
-                  <div className="w-10 bg-slate-100 rounded-t-md relative flex items-end h-full">
-                    <motion.div 
-                      initial={{ height: 0 }}
-                      animate={{ height: `${val}%` }}
-                      transition={{ duration: 1, delay: i * 0.1 }}
-                      className="w-full bg-emerald-400 rounded-t-md"
-                    />
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">W{i + 1}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ProgressChart weeklyProgress={[40, 65, 30, 85]} />
+
         </div>
 
         {/* Right Column: Learning Modules List */}
