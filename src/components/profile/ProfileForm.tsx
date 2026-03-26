@@ -151,7 +151,7 @@ export function ProfileForm() {
 
               {/* Weekly Time */}
               <div className="space-y-3">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Study Intensity</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Study Intensity (Per Week)</Label>
                 <div className="grid grid-cols-2 gap-3">
                   {hoursOptions.map((option) => (
                     <button
