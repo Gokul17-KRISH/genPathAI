@@ -3,11 +3,17 @@ import { ShieldCheck, Target, Server, ExternalLink, Sparkles } from "lucide-reac
 import { useGenPath } from "@/context/GenPathContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function AssessmentPage() {
-  const { profile, assessmentState, updateSkillRating } = useGenPath();
+  const { profile, assessmentState, updateSkillRating, generatePath, isGenerating } = useGenPath();
   const { confidenceSummary, skillsForAssessment } = assessmentState;
+  const navigate = useNavigate();
+
+  const handleGeneratePath = async () => {
+    await generatePath();
+    navigate("/learning");
+  };
 
   return (
     <div className="space-y-12">
@@ -38,12 +44,14 @@ export function AssessmentPage() {
               <div className="text-sm font-bold text-slate-900 leading-none">Calibrated</div>
             </div>
           </div>
-          <Link to="/learning">
-            <Button className="h-14 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm transition-all flex items-center gap-2">
-              Generate Path
-              <Sparkles className="w-5 h-5" />
-            </Button>
-          </Link>
+          <Button 
+            onClick={handleGeneratePath} 
+            disabled={isGenerating}
+            className="h-14 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm transition-all flex items-center gap-2"
+          >
+            {isGenerating ? "Generating..." : "Generate Path"}
+            <Sparkles className={cn("w-5 h-5", isGenerating && "animate-spin")} />
+          </Button>
         </div>
       </motion.div>
 

@@ -35,6 +35,8 @@ export type AssessmentState = {
   };
 };
 
+export type ModuleStatus = "Not Started" | "In Progress" | "Completed";
+
 export type LearningModule = {
   id: string;
   domainId: string;
@@ -45,7 +47,7 @@ export type LearningModule = {
   durationWeeks: number;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   activityType: "Watch" | "Read" | "Practice" | "Project";
-  status: "Not Started" | "In Progress" | "Completed";
+  status: ModuleStatus;
   reason: string;
 };
 

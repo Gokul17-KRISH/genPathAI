@@ -121,16 +121,24 @@ export function LearningPage() {
 
                   <div className="flex flex-wrap gap-3 pt-4">
                     <Button 
-                      onClick={() => updateModuleStatus(module.id, module.status === 'Completed' ? 'Not Started' : 'Completed')}
+                      onClick={() => {
+                        const nextStatus = module.status === 'Not Started' ? 'In Progress' : 
+                                           module.status === 'In Progress' ? 'Completed' : 'Not Started';
+                        updateModuleStatus(module.id, nextStatus as any);
+                      }}
                       className={cn(
                         "rounded-xl px-6 h-12 text-sm font-bold transition-all shadow-sm",
                         module.status === 'Completed' 
                           ? "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200" 
-                          : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                          : module.status === 'In Progress'
+                            ? "bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200"
+                            : "bg-indigo-600 hover:bg-indigo-700 text-white"
                       )}
                     >
                       {module.status === 'Completed' ? (
                         <>Completed <CheckCircle2 className="w-4 h-4 ml-2" /></>
+                      ) : module.status === 'In Progress' ? (
+                        <>In Progress <PlayCircle className="w-4 h-4 ml-2 animate-pulse" /></>
                       ) : (
                         <>Start Module <PlayCircle className="w-4 h-4 ml-2" /></>
                       )}

@@ -125,28 +125,30 @@ export function GenPathProvider({ children }: { children: ReactNode }) {
     setIsGenerating(true);
     
     // Simulate generation delay for UX
-    setTimeout(() => {
-      const skills = getSkillsForGoal(profile.goal).map(s => ({ 
-        id: s.skill, courseId: profile.goal, title: s.skill, description: s.description, learnUrl: s.learnUrl || "#" 
-      }));
-      
-      const abstractDomain = profile.goal.split(" ")[0].toLowerCase();
-      const path = pureGenerateLogic(
-        abstractDomain,
-        profile.goal,
-        skills,
-        skillRatings
-      );
-      
-      setLearningPath(path);
-      
-      // Compute dashboard
-      const dash = buildDashboardState(skills, skillRatings, path, 10);
-      setDashboard(dash);
-      
-      setIsGenerating(false);
-    }, 1200);
-
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        const skills = getSkillsForGoal(profile.goal).map(s => ({ 
+          id: s.skill, courseId: profile.goal, title: s.skill, description: s.description, learnUrl: s.learnUrl || "#" 
+        }));
+        
+        const abstractDomain = profile.goal.split(" ")[0].toLowerCase();
+        const path = pureGenerateLogic(
+          abstractDomain,
+          profile.goal,
+          skills,
+          skillRatings
+        );
+        
+        setLearningPath(path);
+        
+        // Compute dashboard
+        const dash = buildDashboardState(skills, skillRatings, path, 10);
+        setDashboard(dash);
+        
+        setIsGenerating(false);
+        resolve();
+      }, 1200);
+    });
   }, [profile, skillRatings]);
 
   const updateModuleStatus = useCallback((moduleId: string, status: ModuleStatus) => {
