@@ -43,26 +43,46 @@ export function LynxChat() {
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate Lynx AI processing
+    // Simulated AI Processing with empathy and tech awareness
     setTimeout(() => {
-      const responses = [
-        "That's a great question! Based on your current progress, I recommend diving into the fundamentals first.",
-        "I can certainly help with that. Have you checked out the related module in your Learning Path?",
-        "Interesting thought! That actually ties perfectly into your certification goals.",
-        "I'm analyzing your skill matrix... it looks like you're making excellent progress!",
-        "Let me find some good resources on that for you. In the meantime, keep up the Great work!"
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
+      const lowerInput = userMsg.content.toLowerCase();
+      let responseText = "";
+
+      // Greetings
+      if (lowerInput.match(/\b(hi|hello|hey|greetings)\b/)) {
+        responseText = "Hello there! I'm Lynx. How are you feeling about your learning journey today?";
+      } 
+      // Empathy / Stress / Burnout
+      else if (lowerInput.match(/\b(stress|tired|hard|difficult|overwhelmed|give up|frustrated|lost)\b/)) {
+        responseText = "I hear you. It is completely normal to feel overwhelmed when tackling complex new skills. Remember that every expert was once a beginner who felt exactly like you do right now. Please take a deep breath, step away for a short break, and we can revisit this with fresh eyes. You've got this!";
+      }
+      // Tech side / Subject matter
+      else if (lowerInput.match(/\b(tech|react|python|kubernetes|cloud|aws|azure|security|api|code|database)\b/)) {
+        responseText = "When diving into technical topics like that, it's best to break it down. Instead of getting lost in the documentation, try building a tiny, isolated 'Hello World' project using that specific tech. What specifically is confusing you about it?";
+      }
+      // Gratitude
+      else if (lowerInput.match(/\b(thanks|thank you|awesome|great)\b/)) {
+        responseText = "You're very welcome! I'm always here cheering you on. Let's keep making progress!";
+      }
+      // Fallback
+      else {
+        const fallbacks = [
+          "I understand where you're coming from. How about we focus on your next immediate milestone to stay on track?",
+          "That makes sense. Connecting theoretical concepts to practical examples often helps. What module are you planning to tackle next?",
+          "I'm here to support your learning! Even small steps forward are progress. Let me know if you want to revise your curriculum."
+        ];
+        responseText = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+      }
+
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: randomResponse
+        content: responseText
       };
       
       setMessages(prev => [...prev, assistantMsg]);
       setIsTyping(false);
-    }, 1500);
+    }, 1200);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
