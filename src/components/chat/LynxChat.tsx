@@ -30,7 +30,7 @@ export function LynxChat() {
     }
   }, [messages, isTyping, isOpen]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
     
     const userMsg: Message = {
@@ -43,46 +43,74 @@ export function LynxChat() {
     setInputValue('');
     setIsTyping(true);
 
-    // Simulated AI Processing with empathy and tech awareness
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+    try {
+      if (apiKey) {
+        // True AI via Gemini API
+        const prompt = `You are Lynx, a highly empathetic and knowledgeable AI learning assistant. 
+        The user is navigating a personalized learning platform. 
+        User says: "${userMsg.content}"
+        Constraint: Respond in 1 to 3 sentences maximum. Be warm, supportive, acknowledge any stress, and provide crisp technical answers if asked.`;
+        
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+        const data = await response.json();
+        
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          addBotMessage(data.candidates[0].content.parts[0].text);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Gemini API error, falling back to local engine", err);
+    }
+
+    // Simulated AI Processing (Fallback if no API key or if API fails)
     setTimeout(() => {
       const lowerInput = userMsg.content.toLowerCase();
       let responseText = "";
 
       // Greetings
-      if (lowerInput.match(/\b(hi|hello|hey|greetings)\b/)) {
+      if (lowerInput.match(/\b(hi|hello|hey|greetings|wassup)\b/)) {
         responseText = "Hello there! I'm Lynx. How are you feeling about your learning journey today?";
       } 
-      // Empathy / Stress / Burnout
-      else if (lowerInput.match(/\b(stress|tired|hard|difficult|overwhelmed|give up|frustrated|lost)\b/)) {
-        responseText = "I hear you. It is completely normal to feel overwhelmed when tackling complex new skills. Remember that every expert was once a beginner who felt exactly like you do right now. Please take a deep breath, step away for a short break, and we can revisit this with fresh eyes. You've got this!";
+      // Definitions / Tech Questions
+      else if (lowerInput.includes("what is") || lowerInput.includes("explain") || lowerInput.includes("how to")) {
+        if (lowerInput.includes("full stack") || lowerInput.includes("fullstack")) {
+          responseText = "Full stack refers to the entirety of a computer system or application, meaning you work on both the front-end (what users see) and back-end (the server and database). It's a broad skill to learn, so pacing yourself is key!";
+        } else {
+          responseText = "That's a great technical question! In simple terms, think of it as a tool that solves a specific problem in a larger system. To really understand it, I recommend building a tiny 1-page project focused just on that concept.";
+        }
       }
-      // Tech side / Subject matter
-      else if (lowerInput.match(/\b(tech|react|python|kubernetes|cloud|aws|azure|security|api|code|database)\b/)) {
-        responseText = "When diving into technical topics like that, it's best to break it down. Instead of getting lost in the documentation, try building a tiny, isolated 'Hello World' project using that specific tech. What specifically is confusing you about it?";
+      // Empathy / Stress / Burnout
+      else if (lowerInput.match(/\b(stress|tired|hard|difficult|overwhelmed|give up|frustrated|lost|sad|bad)\b/)) {
+        responseText = "I hear you, and your feelings are completely valid. Learning complex technical concepts is exhausting and everyone hits this wall. Please step away for a short break—your brain needs time to process everything. You've got this!";
       }
       // Gratitude
-      else if (lowerInput.match(/\b(thanks|thank you|awesome|great)\b/)) {
-        responseText = "You're very welcome! I'm always here cheering you on. Let's keep making progress!";
+      else if (lowerInput.match(/\b(thanks|thank you|awesome|great|good|nice)\b/)) {
+        responseText = "You're very welcome! I'm always right here if you need support or guidance. Let's keep moving forward together!";
       }
       // Fallback
       else {
-        const fallbacks = [
-          "I understand where you're coming from. How about we focus on your next immediate milestone to stay on track?",
-          "That makes sense. Connecting theoretical concepts to practical examples often helps. What module are you planning to tackle next?",
-          "I'm here to support your learning! Even small steps forward are progress. Let me know if you want to revise your curriculum."
-        ];
-        responseText = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        responseText = "I'm listening and I completely understand. Your learning progress is a journey, not a race. What specific concept would you like us to explore next?";
       }
 
-      const assistantMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: responseText
-      };
-      
-      setMessages(prev => [...prev, assistantMsg]);
-      setIsTyping(false);
+      addBotMessage(responseText);
     }, 1200);
+  };
+
+  const addBotMessage = (text: string) => {
+    const assistantMsg: Message = {
+      id: Date.now().toString() + "-bot",
+      role: 'assistant',
+      content: text
+    };
+    setMessages(prev => [...prev, assistantMsg]);
+    setIsTyping(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
