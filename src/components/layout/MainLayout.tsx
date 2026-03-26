@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { GridBackground } from "@/components/ui/GridBackground";
+import { LynxChat } from "@/components/chat/LynxChat";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -156,6 +157,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           {children}
         </motion.div>
       </main>
+
+      {/* Global AI Chat Assistant */}
+      <LynxChat />
     </div>
   );
 }
